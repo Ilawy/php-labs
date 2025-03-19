@@ -8,6 +8,8 @@ require_once "./includes/libhtml.php";
 
 require_once "./includes/post.php";
 
+if(!isset($_GET['why']))$_GET['why'] = " ";
+
 ?>
 
 <!DOCTYPE html>
