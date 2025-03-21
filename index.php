@@ -6,9 +6,19 @@ error_reporting(E_ALL);
 require_once "./includes/sec_code.php";
 require_once "./includes/libhtml.php";
 
-require_once "./includes/post.php";
+require_once "./includes/save.php";
 
-if(!isset($_GET['why']))$_GET['why'] = " ";
+$formErrors = [];
+
+if (isset($_SESSION['errors'])) {
+    $formErrors = $_SESSION['errors'];
+    // var_dump($_SESSION["valid"]);
+    var_dump($formErrors);
+    unset($_SESSION['errors']);
+    unset($_SESSION['valid']);
+}
+
+if (!isset($_GET['why'])) $_GET['why'] = " ";
 
 ?>
 
@@ -33,7 +43,7 @@ if(!isset($_GET['why']))$_GET['why'] = " ";
             <div class="control">
                 <input required class="input" type="text" placeholder="John" name="first_name">
             </div>
-            <p class="help" style="color: red"><?php echo $_GET['why'] == "first_name" ? "Please check this field" : "" ?></p>
+            <p class="help" style="color: red"><?php  echo in_array("first_name", $formErrors, 1) ? "This field is required" : ""; ?></p>
         </div>
         <!-- lname -->
         <div class="field">
@@ -41,7 +51,7 @@ if(!isset($_GET['why']))$_GET['why'] = " ";
             <div class="control">
                 <input required class="input" type="text" placeholder="Doe" name="last_name">
             </div>
-            <p class="help" style="color: red"><?php echo $_GET['why'] == "last_name" ? "Please check this field" : "" ?></p>
+            <p class="help" style="color: red"><?php  echo in_array("last_name", $formErrors, 1) ? "This field is required" : ""; ?></p>
         </div>
         <!-- address -->
         <div class="field">
@@ -49,7 +59,7 @@ if(!isset($_GET['why']))$_GET['why'] = " ";
             <div class="control">
                 <textarea required name="address" class="textarea"></textarea>
             </div>
-            <p class="help" style="color: red"><?php echo $_GET['why'] == "address" ? "Please check this field" : "" ?></p>
+            <p class="help" style="color: red"><?php  echo in_array("address", $formErrors, 1) ? "This field is required" : ""; ?></p>
         </div>
         <!-- country -->
         <div class="field">
@@ -62,7 +72,7 @@ if(!isset($_GET['why']))$_GET['why'] = " ";
                     </select>
                 </div>
             </div>
-            <p class="help" style="color: red"><?php echo $_GET['why'] == "country" ? "Please check this field" : "" ?></p>
+            <p class="help" style="color: red"><?php  echo in_array("country", $formErrors, 1) ? "This field is required" : ""; ?></p>
         </div>
         <!-- gender -->
         <div class="field">
@@ -77,7 +87,7 @@ if(!isset($_GET['why']))$_GET['why'] = " ";
                     Female
                 </label>
             </div>
-            <p class="help" style="color: red"><?php echo $_GET['why'] == "gender" ? "Please check this field" : "" ?></p>
+            <p class="help" style="color: red"><?php  echo in_array("gender", $formErrors, 1) ? "This field is required" : ""; ?></p>
         </div>
         <!-- skills -->
         <div class="field">
@@ -85,7 +95,7 @@ if(!isset($_GET['why']))$_GET['why'] = " ";
             <div class="control">
                 <?php require "./includes/skills.php"; ?>
             </div>
-            <p class="help" style="color: red"><?php echo $_GET['why'] == "skills" ? "Please check this field" : "" ?></p>
+            <p class="help" style="color: red"><?php  echo in_array("skills", $formErrors, 1) ? "This field is required" : ""; ?></p>
         </div>
         <!-- username -->
         <div class="field">
@@ -93,7 +103,7 @@ if(!isset($_GET['why']))$_GET['why'] = " ";
             <div class="control">
                 <input required class="input" type="text" placeholder="GoodMan2040" name="username">
             </div>
-            <p class="help" style="color: red"><?php echo $_GET['why'] == "username" ? "Please check this field" : "" ?></p>
+            <p class="help" style="color: red"><?php  echo in_array("username", $formErrors, 1) ? "This field is required" : ""; ?></p>
         </div>
         <!-- department -->
         <div class="field">
@@ -101,7 +111,7 @@ if(!isset($_GET['why']))$_GET['why'] = " ";
             <div class="control">
                 <input required class="input" type="text" value="OpenSource" name="department">
             </div>
-            <p class="help" style="color: red"><?php echo $_GET['why'] == "department" ? "Please check this field" : "" ?></p>
+            <p class="help" style="color: red"><?php  echo in_array("department", $formErrors, 1) ? "This field is required" : ""; ?></p>
         </div>
         <!-- verify code -->
         <div class="field">
@@ -113,7 +123,7 @@ if(!isset($_GET['why']))$_GET['why'] = " ";
             <div class="control">
                 <input required class="input" type="text" name="security_code">
             </div>
-            <p class="help" style="color: red"><?php echo $_GET['why'] == "security_code" ? "Please check this field" : "" ?></p>
+            <p class="help" style="color: red"><?php  echo in_array("security_code", $formErrors, 1) ? "This field is required" : ""; ?></p>
         </div>
         <div>
             <button>Submit</button>
