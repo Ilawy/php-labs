@@ -1,7 +1,7 @@
 <?php
 
 
-function validate($key, $nonempty = false, $nonset = false, $pattern = null, $source = null, $custom=null, $message = null) {    
+function validate($key, $nonempty = true, $nonset = true, $pattern = null, $source = null, $custom=null, $message = null) {    
     if($source == null)$source = $_POST;
     if($nonset && !isset($source[$key]))return [false, $message ? $message : "Field is required"];
     $value = $source[$key];
