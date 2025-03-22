@@ -1,0 +1,28 @@
+
+
+.container{
+    max-width: 70ch;
+    margin: 0 auto;
+    padding: 1rem;
+}
+
+
+.login-button{
+    width: 100%;
+}
+
+.text-danger{
+    color: red;
+    font-weight: bold;
+    font-size: small;
+}
+
+.card{
+    &:empty{
+        display: none !important;
+    }
+}
+
+.card-danger{
+    color: red;
+}

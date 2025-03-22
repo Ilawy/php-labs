@@ -1,5 +1,5 @@
 <?php
-    include_once "../includes/libhtml.php"
+    include_once "lib/html.php";
     
 
 ?>
@@ -7,7 +7,7 @@
 <html lang="en">
 <head>
     <?= generateHead("Cafeteria", false); ?>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="/~static/style.css?3">
 </head>
 <body>
 
