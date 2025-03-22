@@ -5,20 +5,18 @@ ini_set('display_startup_errors', '1');
 error_reporting(E_ALL);
 require_once "./includes/sec_code.php";
 require_once "./includes/libhtml.php";
+require_once "./includes/countries.php";
 
 require_once "./includes/save.php";
 
-$formErrors = [];
+$formErrors = isset($_SESSION['errors']) ? $_SESSION['errors'] : [];
+$formValues = isset($_SESSION['values']) ? $_SESSION['values'] : [];
 
-if (isset($_SESSION['errors'])) {
-    $formErrors = $_SESSION['errors'];
-    // var_dump($_SESSION["valid"]);
-    var_dump($formErrors);
+if (isset($_SESSION['errors']) || isset($_SESSION['values'])) {
     unset($_SESSION['errors']);
-    unset($_SESSION['valid']);
+    unset($_SESSION['values']);
 }
 
-if (!isset($_GET['why'])) $_GET['why'] = " ";
 
 ?>
 
@@ -26,7 +24,7 @@ if (!isset($_GET['why'])) $_GET['why'] = " ";
 <html lang="en">
 
 <head>
-    <?php generate_head(); ?>
+    <?php generateHead(); ?>
     <style>
         form {
             max-width: 70ch;
@@ -41,25 +39,25 @@ if (!isset($_GET['why'])) $_GET['why'] = " ";
         <div class="field">
             <label class="label">First name</label>
             <div class="control">
-                <input required class="input" type="text" placeholder="John" name="first_name">
+                <input required value='<?= $formValues["first_name"] ?? "" ?>' class="input" type="text" placeholder="John" name="first_name">
             </div>
-            <p class="help" style="color: red"><?php  echo in_array("first_name", $formErrors, 1) ? "This field is required" : ""; ?></p>
+            <p class="help" style="color: red"><?php  echo isset($formErrors["first_name"]) ? $formErrors['first_name'] : ""; ?></p>
         </div>
         <!-- lname -->
         <div class="field">
             <label class="label">Last name</label>
             <div class="control">
-                <input required class="input" type="text" placeholder="Doe" name="last_name">
+                <input required value='<?= $formValues["last_name"] ?? "" ?>' class="input" type="text" placeholder="Doe" name="last_name">
             </div>
-            <p class="help" style="color: red"><?php  echo in_array("last_name", $formErrors, 1) ? "This field is required" : ""; ?></p>
+            <p class="help" style="color: red"><?php  echo isset($formErrors["last_name"]) ? $formErrors['last_name'] : ""; ?></p>
         </div>
         <!-- address -->
         <div class="field">
             <label class="label">Address</label>
             <div class="control">
-                <textarea required name="address" class="textarea"></textarea>
+                <textarea required name="address" class="textarea"><?= $formValues["address"] ?? "" ?></textarea>
             </div>
-            <p class="help" style="color: red"><?php  echo in_array("address", $formErrors, 1) ? "This field is required" : ""; ?></p>
+            <p class="help" style="color: red"><?php  echo isset($formErrors["address"]) ? $formErrors['address'] : ""; ?></p>
         </div>
         <!-- country -->
         <div class="field">
@@ -68,11 +66,11 @@ if (!isset($_GET['why'])) $_GET['why'] = " ";
                 <div class="select">
                     <select required name="country">
                         <option value="" selected disabled>Select dropdown</option>
-                        <?php require "./includes/countries.php" ?>
+                        <?php renderCountires($formValues["country"] ?? null); ?>
                     </select>
                 </div>
             </div>
-            <p class="help" style="color: red"><?php  echo in_array("country", $formErrors, 1) ? "This field is required" : ""; ?></p>
+            <p class="help" style="color: red"><?php  echo isset($formErrors["country"]) ? $formErrors['country']: ""; ?></p>
         </div>
         <!-- gender -->
         <div class="field">
@@ -87,7 +85,7 @@ if (!isset($_GET['why'])) $_GET['why'] = " ";
                     Female
                 </label>
             </div>
-            <p class="help" style="color: red"><?php  echo in_array("gender", $formErrors, 1) ? "This field is required" : ""; ?></p>
+            <p class="help" style="color: red"><?php  echo isset($formErrors["gender"]) ? $formErrors['gender'] : ""; ?></p>
         </div>
         <!-- skills -->
         <div class="field">
@@ -95,7 +93,7 @@ if (!isset($_GET['why'])) $_GET['why'] = " ";
             <div class="control">
                 <?php require "./includes/skills.php"; ?>
             </div>
-            <p class="help" style="color: red"><?php  echo in_array("skills", $formErrors, 1) ? "This field is required" : ""; ?></p>
+            <p class="help" style="color: red"><?php  echo isset($formErrors["skills"]) ? $formErrors['skills'] : ""; ?></p>
         </div>
         <!-- username -->
         <div class="field">
@@ -103,7 +101,7 @@ if (!isset($_GET['why'])) $_GET['why'] = " ";
             <div class="control">
                 <input required class="input" type="text" placeholder="GoodMan2040" name="username">
             </div>
-            <p class="help" style="color: red"><?php  echo in_array("username", $formErrors, 1) ? "This field is required" : ""; ?></p>
+            <p class="help" style="color: red"><?php  echo isset($formErrors["username"]) ? $formErrors['username'] : ""; ?></p>
         </div>
         <!-- department -->
         <div class="field">
@@ -111,7 +109,7 @@ if (!isset($_GET['why'])) $_GET['why'] = " ";
             <div class="control">
                 <input required class="input" type="text" value="OpenSource" name="department">
             </div>
-            <p class="help" style="color: red"><?php  echo in_array("department", $formErrors, 1) ? "This field is required" : ""; ?></p>
+            <p class="help" style="color: red"><?php  echo isset($formErrors["department"]) ? $formErrors['department'] : ""; ?></p>
         </div>
         <!-- verify code -->
         <div class="field">
@@ -123,7 +121,7 @@ if (!isset($_GET['why'])) $_GET['why'] = " ";
             <div class="control">
                 <input required class="input" type="text" name="security_code">
             </div>
-            <p class="help" style="color: red"><?php  echo in_array("security_code", $formErrors, 1) ? "This field is required" : ""; ?></p>
+            <p class="help" style="color: red"><?php  echo isset($formErrors["security_code"]) ? $formErrors['security_code'] : ""; ?></p>
         </div>
         <div>
             <button>Submit</button>

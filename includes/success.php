@@ -3,7 +3,7 @@
 <html lang="en">
 
 <head>
-    <?php echo generate_head(); ?>
+    <?php echo generateHead(); ?>
 </head>
 
 <body style="padding: 1rem;">
@@ -19,18 +19,21 @@
         <b>Address</b>
         <?php echo $GLOBALS['result']['address']; ?>
     </p>
-    <p>
+    <p class="is-size-3">
         <b>Your skills </b>
         <?php
-        foreach ($GLOBALS['skills'] as $value) {
-            echo $value . " - ";
+        if (isset($GLOBALS["skills"]) && count($GLOBALS["skills"])) {
+            echo join(", ", $GLOBALS["skills"]);
+        } else {
+            echo "<b>was not added.</b>";
         }
         ?>
     </p>
-    <p>
-        <b>Department   </b>
+    <p class="is-size-3">
+        <b>Department </b>
         <?php echo $GLOBALS['result']['department']; ?>
     </p>
+    <a href="/display.php">Display all records</a>
 </body>
 
 </html>
