@@ -34,6 +34,14 @@ function getAllRows() {
     return $data;
 }
 
+
+function findRow($callback){
+    foreach (getAllRows() as $row) {
+        if($callback($row))return $row;
+    }
+    return null;
+}
+
 function deleteRow($id) {
     $data = [];
     if(file_exists("customer.json")){
