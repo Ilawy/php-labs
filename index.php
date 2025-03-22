@@ -12,8 +12,14 @@ switch ($request) {
     case '/login':
         require __DIR__ . '/views/login.php';
         break;
+    case '/logout':
+        require __DIR__ . '/views/logout.php';
+        break;
     case '/register':
         require __DIR__ . '/views/register.php';
+        break;
+    case '/thanks':
+        require __DIR__ . '/views/thanks.php';
         break;
     default:
         http_response_code(404);

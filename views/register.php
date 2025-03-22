@@ -1,14 +1,24 @@
 <?php
 include_once "lib/html.php";
+include_once "lib/auth.php";
+if (isLoggedIn()) {
+    header("Location: /");
+    exit;
+}
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    require_once "handlers/login.register.php";
+    require_once "handlers/register.handler.php";
     exit;
 }
 
 $errors = [];
+$values = [];
 if (isset($_SESSION['errors'])) {
     $errors = $_SESSION['errors'];
     unset($_SESSION["errors"]);
+}
+if (isset($_SESSION['values'])) {
+    $values = $_SESSION['values'];
+    unset($_SESSION["values"]);
 }
 ?>
 <!DOCTYPE html>
@@ -26,18 +36,18 @@ if (isset($_SESSION['errors'])) {
         <article class="card card-danger">
             <?= $errors["_"] ?? "" ?>
         </article>
-        <form method="post">
+        <form method="post" enctype="multipart/form-data">
             <fieldset class="flex two">
                 <label>
                     Name
-                    <input type="name" name="name" placeholder="Email">
+                    <input value="<?= $values["name"] ?? "" ?>" type="name" name="name" placeholder="John Doe">
                     <span class="text-danger">
                         <?= $errors["name"] ?? "" ?>
                     </span>
                 </label>
                 <label>
                     Email
-                    <input type="email" name="email" placeholder="Email">
+                    <input value="<?= $values["email"] ?? "" ?>" type="email" name="email" placeholder="mymail@yahoo.com">
                     <span class="text-danger">
                         <?= $errors["email"] ?? "" ?>
                     </span>
@@ -64,27 +74,23 @@ if (isset($_SESSION['errors'])) {
                     Room NO.
                     <select name="room">
                         <option value="" selected disabled>Select an option</option>
-                        <option value="app-1">Application 1</option>
-                        <option value="app-2">Application 2</option>
-                        <option value="cloud">Cloud</option>
+                        <option <?= ($values["room"] ?? "") == "app-1" ? "selected" : ""  ?> value="app-1">Application 1</option>
+                        <option <?= ($values["room"] ?? "") == "app-2" ? "selected" : ""  ?> value="app-2">Application 2</option>
+                        <option <?= ($values["room"] ?? "") == "cloud" ? "selected" : ""  ?> value="cloud">Cloud</option>
                     </select>
-
                     <span class="text-danger">
                         <?= $errors["room"] ?? "" ?>
                     </span>
                 </label>
                 <label>
-                    EXT
-                    <input type="text" name="ext" placeholder="Ext">
+                    Profile pic.
+                    <input type="file" name="profile-pic">
                     <span class="text-danger">
-                        <?= $errors["ext"] ?? "" ?>
+                        <?= $errors["profile-pic"] ?? "" ?>
                     </span>
                 </label>
             </fieldset>
-            <label>
-                Profile pic.
-                <input type="file">
-            </label>
+
             <button class="login-button">Login</button>
         </form>
     </div>

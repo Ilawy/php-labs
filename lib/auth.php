@@ -6,6 +6,9 @@ function protect(){
     }
 }
 
+function isLoggedIn(): bool {
+    return isset($_SESSION["login"]) && $_SESSION["login"] == true;
+}
 
 function login($email, $password){
     

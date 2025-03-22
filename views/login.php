@@ -1,10 +1,14 @@
 <?php
 include_once "lib/html.php";
+include_once "lib/auth.php";
+if(isLoggedIn()){
+    header("Location: /");
+    exit;
+}
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     require_once "handlers/login.handler.php";
     exit;
 }
-
 $errors = [];
 if (isset($_SESSION['errors'])) {
     $errors = $_SESSION['errors'];
@@ -45,6 +49,7 @@ if (isset($_SESSION['errors'])) {
             </fieldset>
             <button class="login-button">Login</button>
         </form>
+        <a href="/register">create an account</a>
     </div>
 
 </body>

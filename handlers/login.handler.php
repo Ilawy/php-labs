@@ -10,15 +10,16 @@ $validationResult = [
         custom: fn($email) => [filter_var($email, FILTER_VALIDATE_EMAIL), "Please enter a valid email address"],
     ),
     'password' => validate(
-        "password", 
-        nonempty: true, 
-        nonset: true, 
-        pattern: "/[0-9a-z_]{8,}/", 
-        message: "Password should be at least 8 characters, contains only 0-9, a-z and underscode")
+        "password",
+        nonempty: true,
+        nonset: true,
+        pattern: "/[0-9a-z_]{8,}/",
+        message: "Password should be at least 8 characters, contains only 0-9, a-z and underscode"
+    )
 ];
 
 $errors = getValidationErrors($validationResult);
-if(count($errors)){
+if (count($errors)) {
     $_SESSION["errors"] = $errors;
     header("Location: /login");
     exit;
@@ -28,10 +29,23 @@ $values = getValidationValues($validationResult);
 
 $db = new Database("users");
 
-$user = $db->findRow(fn($row)=>$row["email"] == $values["email"]);
+$user = $db->findRow(fn($row) => $row["email"] == $values["email"]);
 
-if(is_null($user)){
+if (is_null($user)) {
     $_SESSION["errors"] = ["_" => "Email or password are invalid"];
     header("Location: /login");
     exit;
 }
+
+if (password_verify($values["password"], $user["password"])) {
+    $_SESSION["login"] = true;
+    $_SESSION["name"] = $user["name"];
+    $_SESSION["email"] = $user["email"];
+    $_SESSION["profilePic"] = $user["profilePic"];
+    header("Location: /");
+    exit;
+}
+
+$_SESSION["errors"] = ["_" => "Email or password are invalid"];
+header("Location: /login");
+exit;
