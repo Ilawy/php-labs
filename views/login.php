@@ -1,6 +1,6 @@
 <?php
 include_once "lib/html.php";
-include_once "lib/auth.php";
+include_once "lib/operations.php";
 if(isLoggedIn()){
     header("Location: /");
     exit;

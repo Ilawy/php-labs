@@ -6,7 +6,7 @@
 <html lang="en">
 <head>
     <?= generateHead("Cafeteria", false); ?>
-    <link rel="stylesheet" href="/~static/style.css?3">
+    <link rel="stylesheet" href="/static/style.css?3">
 </head>
 <body>
 
@@ -16,10 +16,11 @@
         <p>
             You're seeing this page because you're a member in our system
         </p>
-        <p>
-            Howevere, you can logout below 
+        <div class="user-options">
+            <a class="button" href="/list">List users</a>
+            OR
             <form method="post" action="logout"><button class="">Logout</button></form>
-        </p>
+</div>
     </div>
 
 </body>

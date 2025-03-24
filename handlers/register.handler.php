@@ -53,28 +53,18 @@ if (!$profilePicSuccess) {
 }
 
 
-$userExists = $db->findRow(fn($row) => $row["email"] == $values["email"]);
-if ($userExists) {
-    $_SESSION["errors"] = ["_" => "User already exists"];
+$filePath = generateFilePath($profilePicFileOrError);
+
+try {
+    $result = register($values["name"], $values["email"], $values["room"], $values["password"], $filePath);
+    //TODO: make sure that the file is saved 
+    saveFile($profilePicFileOrError, $filePath);
+    $_SESSION["register"] = true;
+    header("Location: /thanks");
+    exit;
+} catch (Exception $error) {
+    $_SESSION["errors"] = ["_" => $error->getMessage()];
     $_SESSION["values"] = $values;
     header("Location: /register");
     exit;
 }
-
-$profilePicPath = saveFile($profilePicFileOrError);
-
-$db->insertRow(
-    array_merge(
-        pick($values, ["name", "email", "room"]),
-        [
-            "password" => password_hash($values["password"], PASSWORD_BCRYPT),
-            "profilePic" => $profilePicPath,
-            "id" => $db->generateID()
-        ]
-    )
-);
-
-$_SESSION["register"] = true;
-header("Location: /thanks");
-exit;
-

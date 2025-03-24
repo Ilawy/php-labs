@@ -1,6 +1,8 @@
 <?php
 require_once "lib/validator.php";
-require_once "lib/db.php";
+// require_once "lib/db.php";
+include_once "lib/pdo.php";
+
 
 $validationResult = [
     'email' => validate(
@@ -27,9 +29,12 @@ if (count($errors)) {
 
 $values = getValidationValues($validationResult);
 
-$db = new Database("users");
+// $db = new Database("users");
 
-$user = $db->findRow(fn($row) => $row["email"] == $values["email"]);
+
+
+$user = login($values["email"], $values["password"]);
+
 
 if (is_null($user)) {
     $_SESSION["errors"] = ["_" => "Email or password are invalid"];
@@ -37,15 +42,10 @@ if (is_null($user)) {
     exit;
 }
 
-if (password_verify($values["password"], $user["password"])) {
-    $_SESSION["login"] = true;
-    $_SESSION["name"] = $user["name"];
-    $_SESSION["email"] = $user["email"];
-    $_SESSION["profilePic"] = $user["profilePic"];
-    header("Location: /");
-    exit;
-}
-
-$_SESSION["errors"] = ["_" => "Email or password are invalid"];
-header("Location: /login");
+$_SESSION["login"] = true;
+$_SESSION["name"] = $user["name"];
+$_SESSION["email"] = $user["email"];
+$_SESSION["profilePic"] = $user["profilePic"];
+$_SESSION["id"] = $user["id"];
+header("Location: /");
 exit;

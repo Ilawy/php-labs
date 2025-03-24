@@ -27,7 +27,7 @@ function generateTableHead($cols)
 function renderTable($rows, $cols = null)
 {
     if ($cols == null) $cols = isset($rows[0]) ? array_keys($rows[0]) : [];
-    echo '<table class="table">';
+    echo '<table>';
     echo '<thead>';
     generateTableHead($cols);
     echo '</thead>';
