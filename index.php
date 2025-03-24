@@ -1,6 +1,7 @@
 <!-- https://tania.dev/the-simplest-php-router/ -->
 <?php
 require_once "lib/operations.php";
+require_once "lib/orm.php";
 
 $request = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 switch ($request) {

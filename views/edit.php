@@ -7,7 +7,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     exit;
 }
 
-/**@var User $user */
 $user = null;
 
 
