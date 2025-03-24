@@ -56,9 +56,17 @@ if (!$profilePicSuccess) {
 $filePath = generateFilePath($profilePicFileOrError);
 
 try {
-    $result = register($values["name"], $values["email"], $values["room"], $values["password"], $filePath);
+    $orm = new ORM();
+    $result = register($values["name"], $values["email"], $values["room"], $values["password"], $filePath, $orm);
     //TODO: make sure that the file is saved 
-    saveFile($profilePicFileOrError, $filePath);
+    $fileSaved = saveFile($profilePicFileOrError, $filePath);
+    if(!$fileSaved){
+        $orm->pdo->rollBack();
+        throw new Exception("Cannot save your profile picture, please try again later");
+    }
+    $orm = null;
+    
+    
     $_SESSION["register"] = true;
     header("Location: /thanks");
     exit;

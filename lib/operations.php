@@ -40,11 +40,10 @@ function login($email, $password)
 }
 
 
-function register($name, $email, $room, $password, $profilePic)
+function register($name, $email, $room, $password, $profilePic, ORM | null $orm = null)
 {
-    $pdo = null;
     try {
-        // global $pdo;
+        global $orm;
         // $pdo = initPDO();
         // $insertStmt = $pdo->prepare("insert into users (name, email, room, password, profilePic) values (:name, :email, :room, :password, :profilePic)");
         // $insertStmt->bindParam(":name", $name);
@@ -53,13 +52,15 @@ function register($name, $email, $room, $password, $profilePic)
         // $insertStmt->bindValue(":password", password_hash($password, PASSWORD_BCRYPT));
         // $insertStmt->bindParam(":profilePic", $profilePic);
         // $insertStmt->execute();
+
         $row = compact("name", "email", "room", "profilePic");
         $row["password"] = password_hash($password, PASSWORD_BCRYPT);
-        $orm = new ORM();
+        $orm = $orm ? $orm : new ORM();
+        $orm->pdo->beginTransaction();
         $orm->insertInto("users", $row);
-        $orm = null;
-        return true;
     } catch (Exception $e) {
+        global $orm;
+        if($orm && $orm->pdo->inTransaction())$orm->pdo->rollBack();
         $code = ($e->getCode());
         if ($code == "23000") {
             // duplicate
@@ -67,8 +68,7 @@ function register($name, $email, $room, $password, $profilePic)
         }
         throw $e;
     } finally {
-        global $pdo;
-        $pdo = null;
+       
     }
 }
 
