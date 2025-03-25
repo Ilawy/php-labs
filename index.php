@@ -14,6 +14,10 @@ switch ($request) {
         protect();
         require __DIR__ . '/views/list.php';
         break;
+    case '/reservations':
+        protect();
+        require __DIR__ . '/views/reservations.php';
+        break;
     case '/login':
         require __DIR__ . '/views/login.php';
         break;

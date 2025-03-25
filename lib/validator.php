@@ -46,3 +46,28 @@ function validateFile(string $name, array | null $allowedExts = null, int | null
 
     return [true, $file];    
 }
+
+
+
+function handleValidationResult($result, $redirectTo) {
+    $errors = getValidationErrors($result);
+    $values = getValidationValues($result);
+    if($errors){
+        $_SESSION["errors"] = $errors;
+        $_SESSION["values"] = $values;
+        header("Location: $redirectTo");
+        exit;
+    }
+    return $values;
+}
+
+
+function getValidationReturn() {
+    $errors = [];
+    $values = [];
+    if(isset($_SESSION["errors"]))$errors = $_SESSION["errors"];
+    if(isset($_SESSION["values"]))$value = $_SESSION["values"];
+    unset($_SESSION["errors"]);
+    unset($_SESSION["values"]);
+    return [$errors, $values];
+}

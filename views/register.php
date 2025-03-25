@@ -71,18 +71,6 @@ if (isset($_SESSION['values'])) {
             </fieldset>
             <fieldset class="flex two">
                 <label>
-                    Room NO.
-                    <select name="room">
-                        <option value="" selected disabled>Select an option</option>
-                        <option <?= ($values["room"] ?? "") == "app-1" ? "selected" : ""  ?> value="app-1">Application 1</option>
-                        <option <?= ($values["room"] ?? "") == "app-2" ? "selected" : ""  ?> value="app-2">Application 2</option>
-                        <option <?= ($values["room"] ?? "") == "cloud" ? "selected" : ""  ?> value="cloud">Cloud</option>
-                    </select>
-                    <span class="text-danger">
-                        <?= $errors["room"] ?? "" ?>
-                    </span>
-                </label>
-                <label>
                     Profile pic.
                     <input type="file" name="profile-pic">
                     <span class="text-danger">

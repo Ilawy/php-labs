@@ -22,7 +22,28 @@ class ORM
         $template = $template . " " . "values" . " " . "(" . join(", ", array_map(fn($col) => ":$col", $columns)) . ")";
         $stmt = $this->pdo->prepare($template);
         $stmt->execute($params);
+        return $stmt;
     }
+
+    public function selectFrom(string $table_name, array $columns, array $where = [])
+    {
+        $params = [];
+        $template = "select" . " " . join(", ", $columns) . " " .  "from $table_name"; //TODO: fix this
+        if (count($where)) {
+            $readyConds = [];
+            foreach ($where as $condition) {
+                if (!($condition instanceof Where)) throw new Exception("invalid conition");
+                $readyConds[] = $condition->translate();
+
+                $params = array_merge($params, $condition->getParams());
+            }
+            $template = $template . " " . "where" . " " . join(" and ", $readyConds);
+        }
+        $stmt = $this->pdo->prepare($template);
+        $stmt->execute($params);
+        return $stmt;
+    }
+
 
     public function selectManyFrom(string $table_name, array $columns, array $where = [])
     {
@@ -118,6 +139,11 @@ class Where
     public static function eq(string $column, $value)
     {
         return new Where($column, "=", $value);
+    }
+   
+    public static function lte(string $column, $value)
+    {
+        return new Where($column, "<=", $value);
     }
 
 

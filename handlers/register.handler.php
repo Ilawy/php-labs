@@ -22,8 +22,7 @@ $validationResult = [
     ),
     'password-confirm' => validate(
         "password-confirm",
-    ),
-    'room' => validate("room", pattern: "/app-1|app|-2|cloud/")
+    )
 ];
 
 $errors = getValidationErrors($validationResult);
@@ -57,13 +56,15 @@ $filePath = generateFilePath($profilePicFileOrError);
 
 try {
     $orm = new ORM();
-    $result = register($values["name"], $values["email"], $values["room"], $values["password"], $filePath, $orm);
+    $result = register($values["name"], $values["email"], $values["password"], $filePath, $orm);
     //TODO: make sure that the file is saved 
     $fileSaved = saveFile($profilePicFileOrError, $filePath);
+
     if(!$fileSaved){
         $orm->pdo->rollBack();
         throw new Exception("Cannot save your profile picture, please try again later");
     }
+    $orm->pdo->commit();
     $orm = null;
     
     

@@ -40,7 +40,7 @@ function login($email, $password)
 }
 
 
-function register($name, $email, $room, $password, $profilePic, ORM | null $orm = null)
+function register($name, $email, $password, $profilePic, ORM | null $orm = null)
 {
     try {
         global $orm;
@@ -53,14 +53,14 @@ function register($name, $email, $room, $password, $profilePic, ORM | null $orm 
         // $insertStmt->bindParam(":profilePic", $profilePic);
         // $insertStmt->execute();
 
-        $row = compact("name", "email", "room", "profilePic");
+        $row = compact("name", "email", "profilePic");
         $row["password"] = password_hash($password, PASSWORD_BCRYPT);
         $orm = $orm ? $orm : new ORM();
         $orm->pdo->beginTransaction();
-        $orm->insertInto("users", $row);
+        $stmt = $orm->insertInto("users", $row);
     } catch (Exception $e) {
         global $orm;
-        if($orm && $orm->pdo->inTransaction())$orm->pdo->rollBack();
+        if ($orm && $orm->pdo->inTransaction()) $orm->pdo->rollBack();
         $code = ($e->getCode());
         if ($code == "23000") {
             // duplicate
@@ -68,7 +68,6 @@ function register($name, $email, $room, $password, $profilePic, ORM | null $orm 
         }
         throw $e;
     } finally {
-       
     }
 }
 
@@ -150,7 +149,7 @@ function getUser($id, $pdo = null): User
 }
 
 
-function updateUser(int $id, string | null $name = null, string | null $email = null, string | null $room = null)
+function updateUser(int $id, string | null $name = null, string | null $email = null)
 {
     $pdo = null;
     try {
@@ -177,7 +176,7 @@ function updateUser(int $id, string | null $name = null, string | null $email = 
         // $updateStmt = $pdo->prepare($template);
         // $updateStmt->execute($params);
         $orm = new ORM();
-        $orm->updateFrom("users", compact("name", "email", "room"), [Where::eq("id", $id)]);
+        $orm->updateFrom("users", compact("name", "email"), [Where::eq("id", $id)]);
         $orm = null;
     } catch (Exception $e) {
         $code = ($e->getCode());
@@ -189,5 +188,61 @@ function updateUser(int $id, string | null $name = null, string | null $email = 
     } finally {
         global $pdo;
         $pdo = null;
+    }
+}
+
+
+
+function getUserReservations(int $id, ORM | null $orm = null)
+{
+    $orm = $orm ? $orm : new ORM();
+    $stmt = $orm->selectFrom("reservations", ["*"], [Where::eq("user", $id)]);
+    if ($stmt) return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    return null;
+}
+
+function getAvailablerooms(ORM | null $orm = null)
+{
+    $orm = $orm ? $orm : new ORM();
+    $stmt = $orm->selectFrom("rooms", ["*"]);
+    if ($stmt) return $stmt->fetchAll();
+    return null;
+}
+
+function createReservation($user, $room, $duration, $date, ORM | null $orm = null)
+{
+    $orm = $orm ? $orm : new ORM();
+    try {
+        $orm->pdo->beginTransaction();
+        $result = $orm->insertInto("reservations", [
+            'user' => $user,
+            'room' => $room,
+            'duration_in_hours' => $duration,
+            'start_at' => date("Y-m-d H:i:s", strtotime($date))
+        ]);
+        if (!$result->rowCount()) {
+            $orm->pdo->rollBack();
+            throw new Error("Cannot create reservation");
+        }
+        $orm->pdo->commit();
+        var_dump($result);
+        exit;
+    } catch (Exception $e) {
+        $orm->pdo->rollBack();
+        if ($e instanceof PDOException) {
+            if ($e->getCode() == "23000") {
+                // echo $e->getMessage();
+                if (str_contains($e->getMessage(), "uniq_user_room")) {
+                    //duplicate user - room
+                    throw new Error("Cannot reserve same room twice");
+                } else if (str_contains($e->getMessage(), "user_fk")) {
+                    //user id not found
+                    throw new Error("Cannot retrive user data");
+                } else if (str_contains($e->getMessage(), "room_fk")) {
+                    //user id not found
+                    throw new Error("Cannot retrive user data");
+                }
+            }
+        }
     }
 }
